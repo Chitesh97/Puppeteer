@@ -1,11 +1,12 @@
 .App {
   text-align: center;
-    background-color: #282c34;
+    /* background-color: #282c34; */
+    flex-wrap: wrap;
 }
 
-h2 {
+/* h2 {
   color: white;
-}
+} */
 
 .App-logo {
   height: 40vmin;

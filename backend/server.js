@@ -1,37 +1,42 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
-const path = require("path");
 const cors = require("cors");
 
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
+app.use(express.json());
 
-app.get("/screenshot", async (req, res) => {
-  const url = req.query.url;
+app.post("/screenshots", async (req, res) => {
+  const urls = req.body.urls;
 
   try {
-    if(!url) {
-      throw new Error("Missing URL");
+    if(!urls) {
+      throw new Error("Missing URLs");
     }
 
-    console.log("Taking screenshot of:", url);
-
     const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    const results = [];
 
-    await page.goto(url, {
-      waitUntil: "networkidle2",
-      timeout: 60000
-    });
+    for (const url of urls) {
+      const page = await browser.newPage();
+      await page.goto(url, {waitUntil: "networkidle2"});
 
-    const buffer = await page.screenshot();
+      const buffer = await page.screenshot({ encoding: "base64" });
+
+      results.push({
+        url: url,
+        screenshot: `data:image/png;base64,${buffer}`
+      })
+
+      await page.close();
+    }
 
     await browser.close();
 
-    res.type("png");
-    res.end(buffer, "binary");
+    res.json({ screenshots: results });
+
   } catch (err) {
     console.error("🚨 Screenshot failed:", err.message);
     console.error(err.stack);
