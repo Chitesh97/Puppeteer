@@ -22,6 +22,7 @@ function App() {
       }
 
       const data = await res.json();
+      console.log(data);
       setScreenshots(data.screenshots);
     } catch (err) {
       console.error(err);
