@@ -23,7 +23,7 @@ app.post("/screenshots", async (req, res) => {
       const page = await browser.newPage();
       await page.goto(url, {waitUntil: "networkidle2"});
 
-      const buffer = await page.screenshot({ encoding: "base64" });
+      const buffer = await page.screenshot({ encoding: "base64", fullPage: true });
 
       results.push({
         url: url,
